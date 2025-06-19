@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendario UdeC 2025-2026</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .calendar {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        .hidden {
+            display: none;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .controls button {
+            padding: 8px 16px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="calendar">
+    <h2 id="calendar-title"></h2>
+    <div class="controls">
+        <button onclick="previousMonth()">◀ Anterior</button>
+        <button onclick="nextMonth()">Siguiente ▶</button>
+    </div>
+    <table id="event-table">
+        <thead>
+            <tr><th>Fecha</th><th>Evento</th></tr>
+        </thead>
+        <tbody id="event-body"></tbody>
+    </table>
+</div>
+
+<script>
+    const eventos = [["2025-02-27", "DTI: Inicio del Proceso Centralizado de Control Acad\u00e9mico"], ["2025-02-28", "DTI: Inicio del Proceso Centralizado de Control Acad\u00e9mico"], ["2025-03-03", "Inicio inscripci\u00f3n v\u00eda web + Vinculaci\u00f3n + Nivelaci\u00f3n + Aulas Remediales"], ["2025-03-07", "Fin inscripci\u00f3n asignaturas + Fin semana de vinculaci\u00f3n"], ["2025-03-10", "Inicio de clases todos los cursos"], ["2025-03-12", "Vence plazo Reincorporaci\u00f3n o Continuaci\u00f3n de Estudios"], ["2025-04-04", "Fin modificaciones SAC + Reincorporaciones + Titulaciones + Oferta y Demanda + Cierre inscripci\u00f3n"], ["2025-04-07", "DTI: Depuraci\u00f3n de la Base de Datos"], ["2025-04-08", "DTI: Depuraci\u00f3n de la Base de Datos"], ["2025-04-21", "Inicio Oferta y Demanda Asignaturas 2\u00ba Sem."], ["2025-05-12", "Inicio Pausa Activa Aniversario UdeC"], ["2025-05-14", "Aniversario de la Universidad"], ["2025-05-16", "Fin Pausa Activa + D\u00eda del Trabajador UdeC (tarde libre)"], ["2025-05-19", "No evaluaciones (cert\u00e1menes, maquetas, proyectos)"], ["2025-05-20", "No evaluaciones (cert\u00e1menes, maquetas, proyectos)"], ["2025-06-20", "Fin plazo solicitud suspensi\u00f3n estudios"], ["2025-06-23", "Inicio emisi\u00f3n Actas de Notas"], ["2025-06-27", "Fin plazo registrar suspensi\u00f3n de estudios"], ["2025-07-04", "T\u00e9rmino clases asignaturas semestrales"], ["2025-07-07", "Inicio vacaciones universitarias"], ["2025-07-13", "Fin vacaciones universitarias"], ["2025-07-14", "Inicio evaluaciones de recuperaci\u00f3n"], ["2025-07-25", "Fin evaluaciones + t\u00e9rmino clases anuales"], ["2025-07-28", "Inicio jornadas perfeccionamiento docente"], ["2025-07-29", "Fin registrar notas semestrales + Fin oferta/demanda 2\u00b0 sem"], ["2025-07-30", "DTI: Control Acad\u00e9mico"], ["2025-07-31", "DTI: Control Acad\u00e9mico"], ["2025-08-01", "Fin jornadas perfeccionamiento docente"], ["2025-08-04", "Inicio inscripci\u00f3n v\u00eda web + ajuste oferta/demanda 2\u00ba Sem."], ["2025-08-05", "Vence plazo reincorporaci\u00f3n o continuaci\u00f3n de estudios"], ["2025-08-08", "Fin inscripci\u00f3n asignaturas 2\u00ba Sem."], ["2025-08-11", "Inicio de clases 2\u00ba Sem."], ["2025-08-15", "Feriado: Asunci\u00f3n de la Virgen"], ["2025-09-05", "Fin modificaciones SAC + Reincorporaciones + Titulaciones + Cierre inscripci\u00f3n"], ["2025-09-08", "DTI: Depuraci\u00f3n base de datos"], ["2025-09-09", "DTI: Depuraci\u00f3n base de datos"], ["2025-09-15", "Receso por Fiestas Patrias"], ["2025-09-17", "Receso por Fiestas Patrias"], ["2025-09-18", "Feriado: Fiestas Patrias"], ["2025-09-19", "Feriado: Glorias del Ej\u00e9rcito"], ["2025-09-22", "No evaluaciones + Inicio oferta/demanda 1er sem pr\u00f3ximo a\u00f1o"], ["2025-09-23", "No evaluaciones"], ["2025-10-12", "Feriado: Descubrimiento de Dos Mundos"], ["2025-10-31", "Feriado: D\u00eda Iglesias Evang\u00e9licas y Protestantes"], ["2025-11-01", "Feriado: D\u00eda de Todos los Santos"], ["2025-11-24", "Inicio emisi\u00f3n Actas de Notas"], ["2025-11-28", "Fin solicitud Suspensi\u00f3n de Estudios"], ["2025-12-03", "Fin registrar Suspensiones 2\u00b0 Sem."], ["2025-12-08", "Feriado: Inmaculada Concepci\u00f3n"], ["2025-12-12", "T\u00e9rmino clases todos los cursos"], ["2025-12-15", "Inicio Evaluaciones de Recuperaci\u00f3n"], ["2025-12-24", "Fin Evaluaciones de Recuperaci\u00f3n"], ["2025-12-25", "Feriado: Navidad"], ["2025-12-26", "Inicio Receso Universitario Fin de A\u00f1o"], ["2026-01-04", "Fin Receso Universitario Fin de A\u00f1o"], ["2026-01-05", "Inicio PLEV Asignaturas Anuales y Semestrales"], ["2026-01-07", "Fin registrar Notas Finales + Fin oferta/demanda 1er sem."], ["2026-01-08", "DTI: Inicio Control Acad\u00e9mico Anticipado 2026"], ["2026-01-09", "DTI: Fin Control Acad\u00e9mico Anticipado 2026"], ["2026-01-12", "Inicio inscripci\u00f3n anticipada v\u00eda web + ajustes oferta/demanda"], ["2026-01-16", "Fin inscripci\u00f3n anticipada v\u00eda web"], ["2026-01-21", "Fin inscripci\u00f3n anticipada v\u00eda web para jefaturas"], ["2026-01-23", "Fin plazo solicitudes especiales de admisi\u00f3n"], ["2026-01-30", "Fin PLEV y registro de notas finales"], ["2026-02-02", "Inicio vacaciones de verano 2026"], ["2026-02-26", "DTI: Inicio Control Acad\u00e9mico"], ["2026-02-27", "DTI: Fin Control Acad\u00e9mico"], ["2026-03-01", "Fin vacaciones de verano"], ["2026-03-02", "Inicio inscripci\u00f3n v\u00eda web + Vinculaci\u00f3n + Nivelaci\u00f3n"], ["2026-03-06", "Fin inscripci\u00f3n asignaturas + Fin semana de vinculaci\u00f3n"], ["2026-03-09", "Inicio de clases todos los cursos"]];
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    function renderCalendar(month, year) {
+        const eventBody = document.getElementById("event-body");
+        const calendarTitle = document.getElementById("calendar-title");
+        eventBody.innerHTML = "";
+
+        const monthName = new Date(year, month).toLocaleString("es-ES", { month: "long" });
+        calendarTitle.innerText = monthName.charAt(0).toUpperCase() + monthName.slice(1) + " " + year;
+
+        eventos.forEach(([fecha, descripcion]) => {
+            const dateObj = new Date(fecha);
+            if (dateObj.getMonth() === month && dateObj.getFullYear() === year) {
+                const tr = document.createElement("tr");
+                const tdFecha = document.createElement("td");
+                const tdEvento = document.createElement("td");
+                tdFecha.textContent = fecha;
+                tdEvento.textContent = descripcion;
+                tr.appendChild(tdFecha);
+                tr.appendChild(tdEvento);
+                eventBody.appendChild(tr);
+            }
+        });
+    }
+
+    function previousMonth() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendar(currentMonth, currentYear);
+    }
+
+    function nextMonth() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar(currentMonth, currentYear);
+    }
+
+    renderCalendar(currentMonth, currentYear);
+</script>
+</body>
+</html>
